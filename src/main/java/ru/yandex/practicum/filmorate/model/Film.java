@@ -19,7 +19,7 @@ import java.time.LocalDate;
 public class Film {
     public Film(@NotNull @NonNull String name, String description, LocalDate releaseDate, int duration) {
         this.name = name;
-        this.description =description;
+        this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
     }
@@ -33,7 +33,7 @@ public class Film {
     @NonNull
     @NotBlank
     private String name;
-    @Size(max=200) private String description;
+    @Size(max = 200) private String description;
     private LocalDate releaseDate;
     private int duration;
     private int rate;
