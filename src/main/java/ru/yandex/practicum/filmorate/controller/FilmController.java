@@ -18,7 +18,7 @@ public class FilmController {
     private final HashMap<Integer, Film> films = new HashMap<>();
     private int id;
 
-    @PostMapping(value = "/film")
+    @PostMapping(value = "/films")
     public Film addFilm(@Valid @RequestBody Film film) {
         if (!films.containsKey(film.getId())) {
             validateFilm(film);
@@ -31,7 +31,7 @@ public class FilmController {
         return film;
     }
 
-    @PutMapping(value = "/film")
+    @PutMapping(value = "/films")
     public Film updateFilm(@Valid @RequestBody Film film) {
         if (films.containsKey(film.getId())) {
             validateFilm(film);
@@ -42,7 +42,7 @@ public class FilmController {
         }
     }
 
-    @GetMapping("/film")
+    @GetMapping("/films")
     public List<Film> getFilms() {
         return new ArrayList<>(films.values());
     }
