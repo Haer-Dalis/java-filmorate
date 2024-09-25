@@ -3,10 +3,14 @@ package ru.yandex.practicum.filmorate.model;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.lang.NonNull;
 
 import java.time.LocalDate;
 
+@Getter
+@Setter
 @Data
 public class User {
     public User(@NonNull String email, @NonNull String login, String name, LocalDate birthday) {

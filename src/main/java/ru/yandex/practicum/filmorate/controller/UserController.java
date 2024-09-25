@@ -10,16 +10,16 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.LinkedList;
 
 @RestController
 @Slf4j
 public class UserController {
     private final HashMap<Integer, User> users = new HashMap<>();
     private int id;
+
     @PostMapping(value = "/users")
     public User addUser(@Valid @RequestBody User user) {
-        if(!users.containsKey(user.getId())) {
+        if (!users.containsKey(user.getId())) {
             validateUser(user);
             ++id;
             user.setId(id);
