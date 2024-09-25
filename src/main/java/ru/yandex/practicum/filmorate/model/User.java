@@ -19,9 +19,8 @@ public class User {
         this.name = name;
         this.birthday = birthday;
     }
-    
-    public User() {
-    }
+
+    public User() {}
 
     private int id;
     @NotNull
