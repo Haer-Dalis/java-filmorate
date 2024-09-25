@@ -20,7 +20,9 @@ public class User {
         this.birthday = birthday;
     }
 
-    public User() {}
+    public User() {
+
+    }
 
     private int id;
     @NotNull
