@@ -1,36 +1,34 @@
 package ru.yandex.practicum.filmorate.model;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.lang.NonNull;
+import ru.yandex.practicum.filmorate.validators.CorrectBirthday;
+import ru.yandex.practicum.filmorate.validators.WithoutSpaces;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
 @Data
 public class User {
-    public User(@NonNull String email, @NonNull String login, String name, LocalDate birthday) {
+    public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;
         this.login = login;
         this.name = name;
         this.birthday = birthday;
     }
 
-    public User() {
-
-    }
-
     private int id;
-    @NotNull
+
+    @Email
     @NotBlank
-    @NotNull private String email;
-    @NotNull
+    private String email;
+
     @NotBlank
-    @NotNull private String login;
+    @WithoutSpaces
+    private String login;
+
     private String name;
+
+    @CorrectBirthday
     private LocalDate birthday;
 }

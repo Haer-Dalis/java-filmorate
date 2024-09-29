@@ -2,39 +2,36 @@ package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.lang.NonNull;
+import ru.yandex.practicum.filmorate.validators.ReleaseDate;
 
 import java.time.LocalDate;
 
 /**
  * Film.
  */
-@Getter
-@Setter
 @Data
 public class Film {
-    public Film(@NotNull @NonNull String name, String description, LocalDate releaseDate, int duration) {
+    public Film(@NotBlank String name, String description, LocalDate releaseDate, int duration) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
     }
 
-    public Film() {
-    }
+    private int id;
 
-    @NotNull
-    @NonNull private int id;
-    @NotNull
-    @NonNull
     @NotBlank
     private String name;
-    @Size(max = 200) private String description;
+
+    @Size(max = 200)
+    private String description;
+
+    @ReleaseDate
     private LocalDate releaseDate;
+
+    @Positive
     private int duration;
-    private int rate;
 }

@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,11 +19,12 @@ public class FilmController {
     @PostMapping(value = "/films")
     public Film addFilm(@Valid @RequestBody Film film) {
         if (!films.containsKey(film.getId())) {
-            validateFilm(film);
             ++id;
             film.setId(id);
             films.put(id, film);
+            log.info("Добавлен фильм: {}", film);
         } else {
+            log.error("Не получилось добавить фильм ID {}", film.getId());
             throw new ValidationException("This Id already exists");
         }
         return film;
@@ -34,10 +33,11 @@ public class FilmController {
     @PutMapping(value = "/films")
     public Film updateFilm(@Valid @RequestBody Film film) {
         if (films.containsKey(film.getId())) {
-            validateFilm(film);
             films.put(film.getId(), film);
+            log.info("Обновлен фильм с ID {}", film.getId());
             return film;
         } else {
+            log.error("Не могу обновить ID {}", film.getId());
             throw new ValidationException("There is no such Id");
         }
     }
@@ -46,13 +46,4 @@ public class FilmController {
     public List<Film> getFilms() {
         return new ArrayList<>(films.values());
     }
-
-    private void validateFilm(Film film) {
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))
-                || film.getDuration() <= 0) {
-            throw new ValidationException("Invalid film data");
-
-        }
-    }
-
 }

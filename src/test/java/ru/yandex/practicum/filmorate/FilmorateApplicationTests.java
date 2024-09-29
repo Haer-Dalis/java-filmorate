@@ -1,94 +1,93 @@
 package ru.yandex.practicum.filmorate;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.controller.UserController;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.BeforeAll;
 import java.time.LocalDate;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 @SpringBootTest
 class FilmorateApplicationTests {
 
-	@Test
-	void contextLoads() {
+	private static Validator validator;
+
+	@BeforeAll
+	static void setUp() {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		validator = factory.getValidator();
 	}
 
 	@Test
-	public void whenCreateNullEmail() {
-		try {
-			UserController userController = new UserController();
-			User testUser = new User(null, "HeroOfMight", "Alexandre", LocalDate.parse("2018-11-01"));
-			userController.addUser(testUser);
-		} catch (final NullPointerException e) {
-			Assertions.assertNotNull(e);
-		}
+	public void testBadEmail() {
+		User user = new User("badEmail",
+				"ErevosX", "Alex", LocalDate.of(2010, 9, 7));
+		Set<jakarta.validation.ConstraintViolation<User>> violations = validator.validate(user);
+		assertFalse(violations.isEmpty());
 	}
 
 	@Test
-	public void whenCreateUserWithWrongEmail() {
-		UserController userController = new UserController();
-		User testUser = new User("zombiegmail.com", "Belch", "Bob", LocalDate.parse("2018-11-01"));
-		ValidationException ex = Assertions.assertThrows(ValidationException.class, () -> userController.addUser(testUser));
-		Assertions.assertEquals("Invalid user data!", ex.getMessage());
+	public void testLoginWithProbely() {
+		User user = new User("good@email.com", "bad login", "Alex",
+				LocalDate.of(2010, 9, 7));
+		Set<jakarta.validation.ConstraintViolation<User>> violations = validator.validate(user);
+		assertFalse(violations.isEmpty());
 	}
 
 	@Test
-	public void whenCreateUserWithSpacesInLogin() {
-		UserController userController = new UserController();
-		User testUser = new User("zombie@gmail.com", "Bob Zombie", "Bob", LocalDate.parse("2018-11-01"));
-		ValidationException ex = Assertions.assertThrows(ValidationException.class, () -> userController.addUser(testUser));
-		Assertions.assertEquals("Invalid user data!", ex.getMessage());
+	public void testUser() {
+		User user = new User("hero@email.com",
+				"validLogin", "Alex", LocalDate.of(2010, 9, 7));
+		Set<jakarta.validation.ConstraintViolation<User>> violations = validator.validate(user);
+		assertTrue(violations.isEmpty());
 	}
 
 	@Test
-	public void whenCreateUserWithEmptyName_LoginIsDisplayed() {
-		UserController userController = new UserController();
-		User testUser = new User("zombie@gmail.com", "Belch", null, LocalDate.parse("2018-11-01"));
-		userController.addUser(testUser);
-		Assertions.assertEquals(testUser.getLogin(), userController.getUsers().get(0).getName());
+	public void testReleaseDate() {
+		Film film = new Film("Dragonslayer", "A fantasy movie",
+				LocalDate.of(1767, 7, 5), 180);
+		Set<jakarta.validation.ConstraintViolation<Film>> violations = validator.validate(film);
+		assertFalse(violations.isEmpty());
 	}
 
 	@Test
-	public void whenDateOfBirthIsInTheFuture() {
-		UserController userController = new UserController();
-		User testUser = new User("zombie@gmail.com", "Belch", "Bob", LocalDate.parse("2024-11-01"));
-		ValidationException ex = Assertions.assertThrows(ValidationException.class, () -> userController.addUser(testUser));
-		Assertions.assertEquals("Invalid user data!", ex.getMessage());
+	public void testBadBirthday() {
+		User user = new User("good@email.com", "goodLogin", "Max",
+				LocalDate.of(2094, 7, 5));
+		Set<jakarta.validation.ConstraintViolation<User>> violations = validator.validate(user);
+		assertFalse(violations.isEmpty());
 	}
 
 	@Test
-	public void releaseDate() {
-		FilmController filmController = new FilmController();
-		Film testFilm = new Film("Dragonslayer", "Dragonslayer is a 1981 American dark fantasy film", LocalDate.parse("1893-11-17"), 90);
-		ValidationException ex = Assertions.assertThrows(ValidationException.class, () -> filmController.addFilm(testFilm));
-		Assertions.assertEquals("Invalid film data", ex.getMessage());
+	public void testDuration() {
+		Film film = new Film("Dragonslayer", "A fantasy movie",
+				LocalDate.of(1981, 6, 26), -10);
+		Set<jakarta.validation.ConstraintViolation<Film>> violations = validator.validate(film);
+		assertFalse(violations.isEmpty());
 	}
 
 	@Test
-	public void durationMustBePositive() {
-		FilmController filmController = new FilmController();
-		Film testFilm = new Film("Dragonslayer", "Dragonslayer is a 1981 American dark fantasy film", LocalDate.parse("1993-11-17"), -1);
-		ValidationException ex = Assertions.assertThrows(ValidationException.class, () -> filmController.addFilm(testFilm));
-		Assertions.assertEquals("Invalid film data", ex.getMessage());
+	public void testBadDescriptionh() {
+		String description = "Dragonslayer is a 1981 American dark fantasy film directed by Matthew Robbins from a " +
+				"screenplay he co-wrote with Hal Barwood. It stars Peter MacNicol, Ralph Richardson, John Hallam, and " +
+				"Caitlin Clarke. It was a co-production between Paramount Pictures and Walt Disney Productions, where " +
+				"Paramount handled North American distribution and Disney handled international distribution through " +
+				"Buena Vista International. The story is set in a fictional medieval kingdom where a young wizard " +
+				"encounters challenges as he hunts a dragon, Vermithrax Pejorative.";
+		Film film = new Film("Dragonslayer", description,
+				LocalDate.of(1981, 6, 26), 180);
+		Set<jakarta.validation.ConstraintViolation<Film>> violations = validator.validate(film);
+		assertFalse(violations.isEmpty());
 	}
 
-
-	@Test
-	@SuppressWarnings("null")
-	public void nameOfFilmMustNotBeNull() {
-		try {
-			FilmController filmController = new FilmController();
-			Film testFilm = new Film(null, "Dragonslayer is a 1981 American dark fantasy film", LocalDate.parse("1993-11-17"), 90);
-			filmController.addFilm(testFilm);
-		} catch (final NullPointerException e) {
-			Assertions.assertNotNull(e);
-		}
-	}
 
 
 }
