@@ -21,9 +21,7 @@ public class UserController {
     public User addUser(@Valid @RequestBody User user) {
         if (!users.containsKey(user.getId())) {
             ++id;
-            if (user.getName() == null || user.getName().isEmpty()) {
-                user.setName(user.getLogin());
-            }
+            attachNameIfEmpty(user);
             user.setId(id);
             users.put(id, user);
             log.info("Добавлен новый юзер {}", user);
@@ -37,9 +35,7 @@ public class UserController {
     @PutMapping(value = "/users")
     public User updateUser(@Valid @RequestBody User user) {
         if (users.containsKey(user.getId())) {
-            if (user.getName() == null || user.getName().isEmpty()) {
-                user.setName(user.getLogin());
-            }
+            attachNameIfEmpty(user);
             users.put(user.getId(), user);
             log.info("Обновил юзера {}", user.getId());
             return user;
@@ -52,5 +48,11 @@ public class UserController {
     @GetMapping("/users")
     public List<User> getUsers() {
         return new ArrayList<>(users.values());
+    }
+
+    private void attachNameIfEmpty(User user) {
+        if (user.getName() == null || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
     }
 }

@@ -9,11 +9,12 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
 public class FilmController {
-    private final HashMap<Integer, Film> films = new HashMap<>();
+    private final Map<Integer, Film> films = new HashMap<>();
     private int id;
 
     @PostMapping(value = "/films")

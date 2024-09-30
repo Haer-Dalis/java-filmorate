@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.BeforeAll;
 import java.time.LocalDate;
 import java.util.Set;
@@ -29,7 +30,7 @@ class FilmorateApplicationTests {
 	public void testBadEmail() {
 		User user = new User("badEmail",
 				"ErevosX", "Alex", LocalDate.of(2010, 9, 7));
-		Set<jakarta.validation.ConstraintViolation<User>> violations = validator.validate(user);
+		Set<ConstraintViolation<User>> violations = validator.validate(user);
 		assertFalse(violations.isEmpty());
 	}
 
@@ -37,7 +38,7 @@ class FilmorateApplicationTests {
 	public void testLoginWithProbely() {
 		User user = new User("good@email.com", "bad login", "Alex",
 				LocalDate.of(2010, 9, 7));
-		Set<jakarta.validation.ConstraintViolation<User>> violations = validator.validate(user);
+		Set<ConstraintViolation<User>> violations = validator.validate(user);
 		assertFalse(violations.isEmpty());
 	}
 
@@ -45,7 +46,7 @@ class FilmorateApplicationTests {
 	public void testUser() {
 		User user = new User("hero@email.com",
 				"validLogin", "Alex", LocalDate.of(2010, 9, 7));
-		Set<jakarta.validation.ConstraintViolation<User>> violations = validator.validate(user);
+		Set<ConstraintViolation<User>> violations = validator.validate(user);
 		assertTrue(violations.isEmpty());
 	}
 
@@ -53,7 +54,7 @@ class FilmorateApplicationTests {
 	public void testReleaseDate() {
 		Film film = new Film("Dragonslayer", "A fantasy movie",
 				LocalDate.of(1767, 7, 5), 180);
-		Set<jakarta.validation.ConstraintViolation<Film>> violations = validator.validate(film);
+		Set<ConstraintViolation<Film>> violations = validator.validate(film);
 		assertFalse(violations.isEmpty());
 	}
 
@@ -61,7 +62,7 @@ class FilmorateApplicationTests {
 	public void testBadBirthday() {
 		User user = new User("good@email.com", "goodLogin", "Max",
 				LocalDate.of(2094, 7, 5));
-		Set<jakarta.validation.ConstraintViolation<User>> violations = validator.validate(user);
+		Set<ConstraintViolation<User>> violations = validator.validate(user);
 		assertFalse(violations.isEmpty());
 	}
 
@@ -69,7 +70,7 @@ class FilmorateApplicationTests {
 	public void testDuration() {
 		Film film = new Film("Dragonslayer", "A fantasy movie",
 				LocalDate.of(1981, 6, 26), -10);
-		Set<jakarta.validation.ConstraintViolation<Film>> violations = validator.validate(film);
+		Set<ConstraintViolation<Film>> violations = validator.validate(film);
 		assertFalse(violations.isEmpty());
 	}
 
@@ -83,7 +84,7 @@ class FilmorateApplicationTests {
 				"encounters challenges as he hunts a dragon, Vermithrax Pejorative.";
 		Film film = new Film("Dragonslayer", description,
 				LocalDate.of(1981, 6, 26), 180);
-		Set<jakarta.validation.ConstraintViolation<Film>> violations = validator.validate(film);
+		Set<ConstraintViolation<Film>> violations = validator.validate(film);
 		assertFalse(violations.isEmpty());
 	}
 
