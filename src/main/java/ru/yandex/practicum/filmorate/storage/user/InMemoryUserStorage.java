@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.InternalErrorException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,7 +41,7 @@ public class InMemoryUserStorage implements UserStorage {
             return user;
         } else {
             log.error("Не смог обновить юзера с ID {}", user.getId());
-            throw new InternalErrorException(HttpStatus.INTERNAL_SERVER_ERROR,
+            throw new NotFoundException(HttpStatus.NOT_FOUND,
                     "Нет юзера с id = " + user.getId());
         }
     }

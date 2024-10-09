@@ -65,19 +65,19 @@ public class FilmController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handle(final NotFoundException e) {
-        return new ErrorResponse("Not found.");
+        return new ErrorResponse("Не найдено.");
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handle(final BadRequestException e) {
-        return new ErrorResponse("Bad request.");
+        return new ErrorResponse("Плохой запрос.");
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handle(final InternalErrorException e) {
-        return new ErrorResponse("Internal server error.");
+        return new ErrorResponse("Внутренняя ошибка.");
     }
 
 }
