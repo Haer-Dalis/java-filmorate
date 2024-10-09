@@ -1,58 +1,84 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.BadRequestException;
+import ru.yandex.practicum.filmorate.exception.InternalErrorException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.ErrorResponse;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@Slf4j
 public class UserController {
-    private final Map<Integer, User> users = new HashMap<>();
-    private int id;
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping(value = "/users")
     public User addUser(@Valid @RequestBody User user) {
-        if (!users.containsKey(user.getId())) {
-            ++id;
-            attachNameIfEmpty(user);
-            user.setId(id);
-            users.put(id, user);
-            log.info("Добавлен новый юзер {}", user);
-        } else {
-            log.error("Не смог добавить юзера с ID {}", user.getId());
-            throw new ValidationException("This Id already exists");
-        }
-        return user;
+        return userService.addUser(user);
     }
 
     @PutMapping(value = "/users")
     public User updateUser(@Valid @RequestBody User user) {
-        if (users.containsKey(user.getId())) {
-            attachNameIfEmpty(user);
-            users.put(user.getId(), user);
-            log.info("Обновил юзера {}", user.getId());
-            return user;
-        } else {
-            log.error("Не смог обновить юзера с ID {}", user.getId());
-            throw new ValidationException("There is no such Id");
-        }
+        return userService.updateUser(user);
     }
 
     @GetMapping("/users")
-    public List<User> getUsers() {
-        return new ArrayList<>(users.values());
+    public List<User> getUsersList() {
+        return userService.getUsersList();
     }
 
-    private void attachNameIfEmpty(User user) {
-        if (user.getName() == null || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
+    @GetMapping(value = "/users/{id}")
+    public User getUserById(@PathVariable int id) {
+        return userService.getUserById(id);
     }
+
+    @PutMapping(value = "/users/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable int id, @PathVariable int friendId) {
+        userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping(value = "/users/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
+        userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/users/{id}/friends")
+    public List<User> getListOfFriends(@PathVariable int id) {
+        return userService.getListOfFriends(id);
+    }
+
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public List<User> getListOfMutualFriends(@PathVariable int id, @PathVariable int otherId) {
+        return userService.getListOfMutualFriends(id, otherId);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handle(final NotFoundException e) {
+        return new ErrorResponse("Не найдено.");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handle(final BadRequestException e) {
+        return new ErrorResponse("Плохой запрос.");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handle(final InternalErrorException e) {
+        return new ErrorResponse("Ошибка сервера.");
+    }
+
+
 }
