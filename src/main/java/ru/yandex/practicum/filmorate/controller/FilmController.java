@@ -74,10 +74,4 @@ public class FilmController {
         return new ErrorResponse("Bad request.");
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handle(final InternalErrorException e) {
-        return new ErrorResponse("Internal server error.");
-    }
-
 }
