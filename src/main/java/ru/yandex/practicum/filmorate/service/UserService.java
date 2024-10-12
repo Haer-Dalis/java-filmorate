@@ -29,7 +29,6 @@ public class UserService {
         return userStorage.updateUser(user);
     }
 
-
     public List<User> getUsersList() {
         return new ArrayList<>(userStorage.getUsers());
     }
