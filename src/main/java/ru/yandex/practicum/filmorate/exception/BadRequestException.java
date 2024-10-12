@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-
 public class BadRequestException extends RuntimeException {
 
     private final HttpStatus status;
@@ -15,7 +14,4 @@ public class BadRequestException extends RuntimeException {
         log.error("Неправильный запрос {}: {}", status, message);
     }
 
-    public HttpStatus getStatus() {
-        return this.status;
-    }
 }

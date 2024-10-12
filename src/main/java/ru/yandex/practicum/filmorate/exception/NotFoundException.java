@@ -14,7 +14,4 @@ public class NotFoundException extends RuntimeException {
         log.error("Не найдено {}: {}", status, message);
     }
 
-    public HttpStatus getStatus() {
-        return this.status;
-    }
 }

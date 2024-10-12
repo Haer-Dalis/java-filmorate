@@ -14,7 +14,4 @@ public class InternalErrorException extends RuntimeException {
         log.error("Внетренняя ошибка {}: {}", status, message);
     }
 
-    public HttpStatus getStatus() {
-        return this.status;
-    }
 }

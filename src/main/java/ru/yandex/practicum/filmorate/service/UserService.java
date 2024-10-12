@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class UserService {
-    public UserStorage userStorage;
+    private final UserStorage userStorage;
 
     @Autowired
     public UserService(UserStorage userStorage) {
@@ -62,27 +62,16 @@ public class UserService {
     public List<User> getListOfMutualFriends(int idUserOne, int idUserTwo) {
         Set<Integer> userOneFriends = new HashSet<>(getUserById(idUserOne).getFriends());
         Set<Integer> userTwoFriends = new HashSet<>(getUserById(idUserTwo).getFriends());
-        Set<Integer> mutualFriendIds = userOneFriends.stream()
+        return userOneFriends.stream()
                 .filter(userTwoFriends::contains)
-                .collect(Collectors.toSet());
-        List<User> mutualFriends = mutualFriendIds.stream()
                 .map(this::getUserById)
                 .collect(Collectors.toList());
-        return mutualFriends;
     }
 
     private List<User> setToList(Set<Integer> friendsFromSet) {
         return friendsFromSet.stream()
                 .map(this::getUserById)
                 .collect(Collectors.toList());
-    }
-
-    private <T> Set<T> mergeSet(Set<T> a, Set<T> b) {
-        return new HashSet<T>() { {
-            addAll(a);
-            addAll(b);
-        }
-        };
     }
 
 }

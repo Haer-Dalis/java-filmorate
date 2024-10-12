@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class FilmService {
-    private FilmStorage filmStorage;
-    public UserService userService;
+    private final FilmStorage filmStorage;
+    private final UserService userService;
 
     @Autowired
     public FilmService(FilmStorage filmStorage, UserService userService) {
@@ -60,8 +60,7 @@ public class FilmService {
 
     public List<Film> getMoviesByLikes(int count) {
         List<Film> sortedList = new ArrayList<>(getFilmsList());
-        FilmsByLikesComparator filmsByLikesComparator = new FilmsByLikesComparator();
-        sortedList.sort(filmsByLikesComparator);
+        sortedList.sort(new FilmsByLikesComparator());
         if (count == 0) {
             return sortedList.stream().limit(10).collect(Collectors.toList());
         } else {
@@ -73,13 +72,7 @@ public class FilmService {
 
         @Override
         public int compare(Film film1, Film film2) {
-            if (film1.getLikes().size() > film2.getLikes().size()) {
-                return -1;
-            } else if (film1.getLikes().size() < film2.getLikes().size()) {
-                return 1;
-            } else {
-                return 0;
-            }
+            return Integer.compare(film2.getLikes().size(), film1.getLikes().size());
         }
     }
 
