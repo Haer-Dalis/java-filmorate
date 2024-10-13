@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler(NotFoundException.class) // К сожалению, решение через @ResponseStatus приводит к ошибке 500 вместо 404
     public ResponseEntity<ErrorResponse> handleNotFoundException(final NotFoundException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);

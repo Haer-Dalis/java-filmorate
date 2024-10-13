@@ -6,12 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InternalErrorException extends RuntimeException {
 
-    private final HttpStatus status;
-
     public InternalErrorException(HttpStatus status, String message) {
         super(message);
-        this.status = status;
-        log.error("Внетренняя ошибка {}: {}", status, message);
+        log.error("Внутренняя ошибка {}: {}", status, message);
     }
 
 }
