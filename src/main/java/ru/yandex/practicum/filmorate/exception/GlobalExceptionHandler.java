@@ -5,23 +5,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
+    /* @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(final NotFoundException e) {
         return new ErrorResponse(e.getMessage());
-    }
+    } */
 
-    /*@ExceptionHandler(NotFoundException.class) // К сожалению, решение через @ResponseStatus приводит к ошибке 500 вместо 404
+    @ExceptionHandler(NotFoundException.class) // Да, к сожалению, точно уверен. Можно, например, посмотреть предыдущий тест
     public ResponseEntity<ErrorResponse> handleNotFoundException(final NotFoundException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-    } */
+    }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ErrorResponse> handleBadRequestException(final BadRequestException e) {
