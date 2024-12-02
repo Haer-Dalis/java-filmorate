@@ -16,12 +16,6 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 public class User {
-    public User(String email, String login, String name, LocalDate birthday) {
-        this.email = email;
-        this.login = login;
-        this.name = name;
-        this.birthday = birthday;
-    }
 
     private int id;
 
