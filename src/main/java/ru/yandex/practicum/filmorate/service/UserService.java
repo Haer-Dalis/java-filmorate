@@ -2,10 +2,12 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.friends.FriendshipStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.*;
@@ -16,9 +18,12 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserStorage userStorage;
 
+    private final FriendshipStorage friendshipStorage;
+
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage, FriendshipStorage friendshipStorage) {
         this.userStorage = userStorage;
+        this.friendshipStorage = friendshipStorage;
     }
 
     public User addUser(User user) {
@@ -44,32 +49,22 @@ public class UserService {
     }
 
     public void addFriend(int idUserOne, int idUserTwo) {
-        User friend = getUserById(idUserTwo);
-        getUserById(idUserOne).getFriends().add(idUserTwo);
-        friend.getFriends().add(idUserOne);
+        friendshipStorage.addFriend(idUserOne, idUserTwo);
     }
 
     public void deleteFriend(int idUserOne, int idUserTwo) {
-        getUserById(idUserOne).getFriends().remove(idUserTwo);
-        getUserById(idUserTwo).getFriends().remove(idUserOne);
+        friendshipStorage.deleteFriend(idUserOne, idUserTwo);
     }
 
     public List<User> getListOfFriends(int idUserOne) {
-        return setToList(getUserById(idUserOne).getFriends());
-    }
-
-    public List<User> getListOfMutualFriends(int idUserOne, int idUserTwo) {
-        Set<Integer> userOneFriends = new HashSet<>(getUserById(idUserOne).getFriends());
-        Set<Integer> userTwoFriends = new HashSet<>(getUserById(idUserTwo).getFriends());
-        return userOneFriends.stream()
-                .filter(userTwoFriends::contains)
+        return friendshipStorage.getUserFriends(idUserOne).stream()
                 .map(this::getUserById)
                 .collect(Collectors.toList());
     }
 
-    private List<User> setToList(Set<Integer> friendsFromSet) {
-        return friendsFromSet.stream()
-                .map(this::getUserById)
+    public List<User> getListOfMutualFriends(int idUserOne, int idUserTwo) {
+        return getListOfFriends(idUserOne).stream()
+                .filter(x -> getListOfFriends(idUserTwo).contains(x))
                 .collect(Collectors.toList());
     }
 

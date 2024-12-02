@@ -46,6 +46,14 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
+    @Override
+    public void checkUser(int id) {
+        if (id == 0 || !users.containsKey(id)) {
+            throw new NotFoundException(HttpStatus.NOT_FOUND,
+                    "Нет юзера с id = " + id);
+        }
+    }
+
     public List<User> getUsers() {
         return new ArrayList<>(users.values());
     }
