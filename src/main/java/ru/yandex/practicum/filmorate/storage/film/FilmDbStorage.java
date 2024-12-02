@@ -123,8 +123,6 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    public void deleteFilm(int id) {}
-
     private static Film buildFilm(ResultSet rs, int rowNum) throws SQLException {
         return Film.builder()
                 .id(rs.getInt("film_id"))
