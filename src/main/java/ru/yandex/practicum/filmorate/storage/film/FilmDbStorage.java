@@ -108,8 +108,7 @@ public class FilmDbStorage implements FilmStorage {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public void checkFilm(int id) {
+    private void checkFilm(int id) {
         try {
             Film film = getFilmById(id);
             if (film == null) {
