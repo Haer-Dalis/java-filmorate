@@ -2,6 +2,8 @@ package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validators.CorrectBirthday;
 import ru.yandex.practicum.filmorate.validators.WithoutSpaces;
@@ -11,6 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class User {
     public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;

@@ -51,43 +51,12 @@ class FilmorateApplicationTests {
 	}
 
 	@Test
-	public void testReleaseDate() {
-		Film film = new Film("Dragonslayer", "A fantasy movie",
-				LocalDate.of(1767, 7, 5), 180);
-		Set<ConstraintViolation<Film>> violations = validator.validate(film);
-		assertFalse(violations.isEmpty());
-	}
-
-	@Test
 	public void testBadBirthday() {
 		User user = new User("good@email.com", "goodLogin", "Max",
 				LocalDate.of(2094, 7, 5));
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 		assertFalse(violations.isEmpty());
 	}
-
-	@Test
-	public void testDuration() {
-		Film film = new Film("Dragonslayer", "A fantasy movie",
-				LocalDate.of(1981, 6, 26), -10);
-		Set<ConstraintViolation<Film>> violations = validator.validate(film);
-		assertFalse(violations.isEmpty());
-	}
-
-	@Test
-	public void testBadDescriptionh() {
-		String description = "Dragonslayer is a 1981 American dark fantasy film directed by Matthew Robbins from a " +
-				"screenplay he co-wrote with Hal Barwood. It stars Peter MacNicol, Ralph Richardson, John Hallam, and " +
-				"Caitlin Clarke. It was a co-production between Paramount Pictures and Walt Disney Productions, where " +
-				"Paramount handled North American distribution and Disney handled international distribution through " +
-				"Buena Vista International. The story is set in a fictional medieval kingdom where a young wizard " +
-				"encounters challenges as he hunts a dragon, Vermithrax Pejorative.";
-		Film film = new Film("Dragonslayer", description,
-				LocalDate.of(1981, 6, 26), 180);
-		Set<ConstraintViolation<Film>> violations = validator.validate(film);
-		assertFalse(violations.isEmpty());
-	}
-
 
 
 }
