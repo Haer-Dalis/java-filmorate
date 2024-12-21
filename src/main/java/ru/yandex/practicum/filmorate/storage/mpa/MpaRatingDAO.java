@@ -29,28 +29,20 @@ public class MpaRatingDAO implements MpaRatingStorage {
 
     @Override
     public MpaRating getMpaRatingById(Integer id) {
-        validateRating(id);
         String sqlQuery = "SELECT * FROM mpa_rating mpa WHERE mpa.id = ?";
         return jdbcTemplate.query(sqlQuery, MpaRatingDAO::buildMpaRating, id).stream()
                 .findAny().orElseThrow(() -> new BadRequestException(HttpStatus.BAD_REQUEST,
                 "Нет рейтинга с id = " + id));
     }
 
-    private void validateRating(Integer id) {
-
-    }
-
     @Override
     public void checkMpaRating(Integer id) {
-        try {
-            MpaRating rating = getMpaRatingById(id);
-            if (rating == null) {
-                throw new NotFoundException(HttpStatus.NOT_FOUND,
-                        String.format("не найден рейтинг с id %s", id));
-            }
-        } catch (EmptyResultDataAccessException e) {
+        String sqlQuery = "SELECT COUNT(*) FROM mpa_rating WHERE id = ?";
+        Integer count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
+
+        if (count == null || count == 0) {
             throw new NotFoundException(HttpStatus.NOT_FOUND,
-                    String.format("Ошибка СУБД - не найден рейтинг с id %s", id));
+                    String.format("Нет рейтинга с id %s", id));
         }
     }
 
