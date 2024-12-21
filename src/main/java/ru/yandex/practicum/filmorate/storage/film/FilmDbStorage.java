@@ -7,6 +7,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -44,6 +45,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
+        validateMpa(film.getMpaRating().getId());
         String sqlQuery = "INSERT INTO films (name, description, release_date, duration) " +
                 "VALUES (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -57,7 +59,6 @@ public class FilmDbStorage implements FilmStorage {
         }, keyHolder);
         film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
 
-        //mpaStorage.checkMpaRating(film.getMpaRating().getId());
         String sql = "UPDATE films SET mpa_rating = ? WHERE film_id = ?";
         jdbcTemplate.update(sql, film.getMpaRating().getId(), film.getId());
 
@@ -65,6 +66,16 @@ public class FilmDbStorage implements FilmStorage {
         checkFilm(film.getId());
         log.info("Создан фильм: {}", film);
         return film;
+    }
+
+    private void validateMpa(int id) {
+        String sqlQuery = "SELECT COUNT(*) FROM mpa_rating WHERE id = ?";
+        Integer count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
+
+        if (count == null || count == 0) {
+            throw new BadRequestException(HttpStatus.BAD_REQUEST,
+                    String.format("Нет рейтинга с id %s", id));
+        }
     }
 
     @Override
