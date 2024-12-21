@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.BadRequestException;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.MpaRating;
 
 import java.sql.ResultSet;
@@ -31,7 +30,7 @@ public class MpaRatingDAO implements MpaRatingStorage {
     public MpaRating getMpaRatingById(Integer id) {
         String sqlQuery = "SELECT * FROM mpa_rating mpa WHERE mpa.id = ?";
         return jdbcTemplate.query(sqlQuery, MpaRatingDAO::buildMpaRating, id).stream()
-                .findAny().orElseThrow(() -> new NotFoundException(HttpStatus.BAD_REQUEST,
+                .findAny().orElseThrow(() -> new BadRequestException(HttpStatus.BAD_REQUEST,
                 "Нет рейтинга с id = " + id));
     }
 
