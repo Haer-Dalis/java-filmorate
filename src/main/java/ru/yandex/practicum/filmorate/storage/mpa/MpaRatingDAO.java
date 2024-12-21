@@ -29,10 +29,15 @@ public class MpaRatingDAO implements MpaRatingStorage {
 
     @Override
     public MpaRating getMpaRatingById(Integer id) {
+        validateRating(id);
         String sqlQuery = "SELECT * FROM mpa_rating mpa WHERE mpa.id = ?";
         return jdbcTemplate.query(sqlQuery, MpaRatingDAO::buildMpaRating, id).stream()
                 .findAny().orElseThrow(() -> new BadRequestException(HttpStatus.BAD_REQUEST,
                 "Нет рейтинга с id = " + id));
+    }
+
+    private void validateRating(Integer id) {
+
     }
 
     @Override

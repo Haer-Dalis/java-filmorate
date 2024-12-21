@@ -18,6 +18,7 @@ public class MpaRatingService {
     }
 
     public MpaRating getMpaRatingById(Integer id) {
+        mpaRatingStorage.checkMpaRating(id);
         return mpaRatingStorage.getMpaRatingById(id);
     }
 
