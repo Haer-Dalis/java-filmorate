@@ -31,7 +31,7 @@ public class MpaRatingDAO implements MpaRatingStorage {
     public MpaRating getMpaRatingById(Integer id) {
         String sqlQuery = "SELECT * FROM mpa_rating mpa WHERE mpa.id = ?";
         return jdbcTemplate.query(sqlQuery, MpaRatingDAO::buildMpaRating, id).stream()
-                .findAny().orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND,
+                .findAny().orElseThrow(() -> new BadRequestException(HttpStatus.BAD_REQUEST,
                 "Нет рейтинга с id = " + id));
     }
 
@@ -40,11 +40,11 @@ public class MpaRatingDAO implements MpaRatingStorage {
         try {
             MpaRating rating = getMpaRatingById(id);
             if (rating == null) {
-                throw new BadRequestException(HttpStatus.BAD_REQUEST,
+                throw new NotFoundException(HttpStatus.NOT_FOUND,
                         String.format("не найден рейтинг с id %s", id));
             }
         } catch (EmptyResultDataAccessException e) {
-            throw new BadRequestException(HttpStatus.BAD_REQUEST,
+            throw new NotFoundException(HttpStatus.NOT_FOUND,
                     String.format("Ошибка СУБД - не найден рейтинг с id %s", id));
         }
     }
