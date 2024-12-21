@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MpaRating;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaRatingStorage;
@@ -46,6 +47,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film addFilm(Film film) {
         validateMpa(film.getMpaRating().getId());
+        validateGenres(film.getGenres());
         String sqlQuery = "INSERT INTO films (name, description, release_date, duration) " +
                 "VALUES (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -66,6 +68,21 @@ public class FilmDbStorage implements FilmStorage {
         checkFilm(film.getId());
         log.info("Создан фильм: {}", film);
         return film;
+    }
+
+    private void validateGenres(Set<Genre> genres) {
+        if (genres == null || genres.isEmpty()) {
+            return;
+        }
+
+        for (Genre genre : genres) {
+            try {
+                genreStorage.getGenreById(genre.getId());
+            } catch (NotFoundException e) {
+                throw new BadRequestException(HttpStatus.BAD_REQUEST,
+                        String.format("Некорректный жанр с id = %d", genre.getId()));
+            }
+        }
     }
 
     private void validateMpa(int id) {
