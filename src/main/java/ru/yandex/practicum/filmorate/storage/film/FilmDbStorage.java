@@ -57,7 +57,7 @@ public class FilmDbStorage implements FilmStorage {
         }, keyHolder);
         film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
 
-        mpaStorage.checkMpaRating(film.getMpaRating().getId());
+        //mpaStorage.checkMpaRating(film.getMpaRating().getId());
         String sql = "UPDATE films SET mpa_rating = ? WHERE film_id = ?";
         jdbcTemplate.update(sql, film.getMpaRating().getId(), film.getId());
 
