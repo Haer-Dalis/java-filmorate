@@ -31,6 +31,7 @@ public class UserService {
     }
 
     public User updateUser(User user) {
+        userStorage.checkUser(user.getId());
         return userStorage.updateUser(user);
     }
 
@@ -39,6 +40,7 @@ public class UserService {
     }
 
     public User getUserById(int id) {
+        userStorage.checkUser(id);
         User user = userStorage.getUserById(id);
         if (user != null) {
             return user;
@@ -49,20 +51,27 @@ public class UserService {
     }
 
     public void addFriend(int idUserOne, int idUserTwo) {
+        userStorage.checkUser(idUserOne);
+        userStorage.checkUser(idUserTwo);
         friendshipStorage.addFriend(idUserOne, idUserTwo);
     }
 
     public void deleteFriend(int idUserOne, int idUserTwo) {
+        userStorage.checkUser(idUserOne);
+        userStorage.checkUser(idUserTwo);
         friendshipStorage.deleteFriend(idUserOne, idUserTwo);
     }
 
     public List<User> getListOfFriends(int idUserOne) {
+        userStorage.checkUser(idUserOne);
         return friendshipStorage.getUserFriends(idUserOne).stream()
                 .map(this::getUserById)
                 .collect(Collectors.toList());
     }
 
     public List<User> getListOfMutualFriends(int idUserOne, int idUserTwo) {
+        userStorage.checkUser(idUserOne);
+        userStorage.checkUser(idUserTwo);
         return getListOfFriends(idUserOne).stream()
                 .filter(x -> getListOfFriends(idUserTwo).contains(x))
                 .collect(Collectors.toList());
