@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -35,7 +34,6 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
-        checkFilm(film.getId());
         return filmStorage.updateFilm(film);
     }
 
@@ -54,33 +52,17 @@ public class FilmService {
     }
 
     public void like(int filmId, int userId) {
-        checkFilm(filmId);
         userService.getUserById(userId);
         likesStorage.addLike(filmId, userId);
     }
 
     public void unlike(int filmId, int userId) {
-        checkFilm(filmId);
         userService.getUserById(userId);
         likesStorage.removeLike(filmId, userId);
     }
 
     public List<Film> getMoviesByLikes(int count) {
         return filmStorage.getPopularFilms(count);
-    }
-
-    private void checkFilm(int id) {
-        try {
-            Film film = getFilmById(id);
-            if (film == null) {
-                throw new NotFoundException(HttpStatus.NOT_FOUND,
-                        "Нет фильма с id = " + id);
-            }
-            log.trace("проверка id у фильма: {} - OK", id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException(HttpStatus.NOT_FOUND,
-                    "Нет фильма с id = " + id);
-        }
     }
 
 }

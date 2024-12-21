@@ -6,6 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.MpaRating;
 
@@ -39,11 +40,11 @@ public class MpaRatingDAO implements MpaRatingStorage {
         try {
             MpaRating rating = getMpaRatingById(id);
             if (rating == null) {
-                throw new NotFoundException(HttpStatus.NOT_FOUND,
+                throw new BadRequestException(HttpStatus.BAD_REQUEST,
                         String.format("не найден рейтинг с id %s", id));
             }
         } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException(HttpStatus.NOT_FOUND,
+            throw new BadRequestException(HttpStatus.BAD_REQUEST,
                     String.format("Ошибка СУБД - не найден рейтинг с id %s", id));
         }
     }
