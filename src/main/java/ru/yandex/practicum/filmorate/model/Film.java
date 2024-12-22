@@ -10,7 +10,9 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.validators.ReleaseDate;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,7 +42,7 @@ public class Film {
     @JsonProperty("mpa")
     private MpaRating mpaRating;
 
-    private Set<Genre> genres = new HashSet<>();
+    private List<Integer> genres = new ArrayList<>();
 
     public long getLikesCount() {
         if (likes == null) {
