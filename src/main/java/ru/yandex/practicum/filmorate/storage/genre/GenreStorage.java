@@ -8,7 +8,7 @@ import java.util.Set;
 
 public interface GenreStorage {
 
-    List<Genre> getAllGenres();
+    List<Integer> getAllGenres();
 
     Genre getGenreById(Integer id);
 

@@ -13,7 +13,7 @@ public class GenreService {
 
     private final GenreStorageDAO genreStorage;
 
-    public List<Genre> getAllGenres() {
+    public List<Integer> getAllGenres() {
         return genreStorage.getAllGenres();
     }
 
