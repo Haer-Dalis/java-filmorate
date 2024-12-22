@@ -27,7 +27,7 @@ public class LikesStorageDAO implements LikesStorage {
     @Override
     public void addLike(int userId, int filmId) {
         try {
-            String checkFilmQuery = "SELECT COUNT(*) FROM films WHERE id = ?";
+            String checkFilmQuery = "SELECT COUNT(*) FROM films WHERE film_id = ?";
             Integer filmCount = jdbcTemplate.queryForObject(checkFilmQuery, Integer.class, filmId);
 
             if (filmCount == null || filmCount == 0) {
