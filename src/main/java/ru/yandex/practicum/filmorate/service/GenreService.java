@@ -13,8 +13,8 @@ public class GenreService {
 
     private final GenreStorageDAO genreStorage;
 
-    public List<Integer> getAllGenres() {
-        return genreStorage.getAllGenreIds();
+    public List<Genre> getAllGenres() {
+        return genreStorage.getAllGenres();
     }
 
     public Genre getGenreById(Integer id) {
