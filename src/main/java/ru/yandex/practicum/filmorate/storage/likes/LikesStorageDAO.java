@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.InternalErrorException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 @Slf4j
 @Component
@@ -26,9 +27,18 @@ public class LikesStorageDAO implements LikesStorage {
     @Override
     public void addLike(int userId, int filmId) {
         try {
+            String checkFilmQuery = "SELECT COUNT(*) FROM films WHERE id = ?";
+            Integer filmCount = jdbcTemplate.queryForObject(checkFilmQuery, Integer.class, filmId);
+
+            if (filmCount == null || filmCount == 0) {
+                throw new NotFoundException(HttpStatus.NOT_FOUND,
+                        String.format("Фильм с id %d не найден", filmId));
+            }
             String sqlQuery = "INSERT INTO likes (user_id, film_id) VALUES (?, ?)";
             jdbcTemplate.update(sqlQuery, userId, filmId);
             log.info("пользователю с id {} нравится фильм с id {}", userId, filmId);
+        } catch (NotFoundException e) {
+            throw e;
         } catch (Exception e) {
             String errorMessage = String.format("Ошибка при добавлении лайка: userId=%d, filmId=%d. Причина: %s",
                     userId, filmId, e.getMessage());
