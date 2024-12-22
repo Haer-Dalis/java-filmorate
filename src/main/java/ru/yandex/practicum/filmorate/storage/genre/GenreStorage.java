@@ -12,7 +12,7 @@ public interface GenreStorage {
 
     Genre getGenreById(Integer id);
 
-    Set<Genre> getFilmGenres(Long filmId);
+    Set<Genre> getFilmGenres(int filmId);
 
     void updateFilmGenres(Film film);
 

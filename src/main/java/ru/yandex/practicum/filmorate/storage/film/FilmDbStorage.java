@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MpaRating;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaRatingStorage;
@@ -39,7 +40,7 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> getFilms() {
         String sqlQuery = "SELECT f.*, m.rating_name FROM films f LEFT JOIN mpa_rating m ON f.mpa_rating = m.id";
         return jdbcTemplate.query(sqlQuery, FilmDbStorage::buildFilm).stream()
-                .peek(film -> film.setGenres(genreStorage.getFilmGenreIds(film.getId())))
+                .peek(film -> film.setGenres(genreStorage.getFilmGenres(film.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -69,17 +70,17 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    private void validateGenres(List<Integer> genreIds) {
-        if (genreIds == null || genreIds.isEmpty()) {
+    private void validateGenres(Set<Genre> genres) {
+        if (genres == null || genres.isEmpty()) {
             return;
         }
 
-        for (int genreId : genreIds) {
+        for (Genre genre : genres) {
             try {
-                genreStorage.getGenreById(genreId);
+                genreStorage.getGenreById(genre.getId());
             } catch (NotFoundException e) {
                 throw new BadRequestException(HttpStatus.BAD_REQUEST,
-                        String.format("Некорректный жанр с id = %d", genreId));
+                        String.format("Некорректный жанр с id = %d", genre.getId()));
             }
         }
     }
@@ -118,7 +119,7 @@ public class FilmDbStorage implements FilmStorage {
         Film film = jdbcTemplate.query(sqlQuery, FilmDbStorage::buildFilm, id).stream()
                 .findAny().orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND,
                 "Нет фильма с id = " + id));
-        film.setGenres(genreStorage.getFilmGenreIds(id));
+        film.setGenres(genreStorage.getFilmGenres(id));
         return film;
     }
 
@@ -131,7 +132,7 @@ public class FilmDbStorage implements FilmStorage {
                 " LEFT JOIN mpa_rating m ON f.mpa_rating = m.id" +
                 " GROUP BY f.film_id ORDER BY COUNT(l.user_id), f.film_id DESC LIMIT (?)";
         return jdbcTemplate.query(sqlQuery, FilmDbStorage::buildFilm, limit).stream()
-                .peek(film -> film.setGenres(genreStorage.getFilmGenreIds(film.getId())))
+                .peek(film -> film.setGenres(genreStorage.getFilmGenres(film.getId())))
                 .collect(Collectors.toList());
     }
 

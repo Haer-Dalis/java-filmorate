@@ -35,7 +35,7 @@ public class GenreStorageDAO implements GenreStorage {
     }
 
     @Override
-    public Set<Genre> getFilmGenres(Long filmId) {
+    public Set<Genre> getFilmGenres(int filmId) {
         String sqlQuery = "SELECT fg.genre_id id, g.genre FROM film_genres fg " +
                 "LEFT JOIN genres g ON g.id = fg.genre_id WHERE fg.film_id = ?";
 
