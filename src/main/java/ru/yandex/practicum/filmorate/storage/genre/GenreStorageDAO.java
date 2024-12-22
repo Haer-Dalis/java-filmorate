@@ -21,9 +21,9 @@ public class GenreStorageDAO implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<Integer> getAllGenres() {
-        String sqlQuery = "SELECT id FROM genres GROUP BY id";
-        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> rs.getInt("id"));
+    public List<Genre> getAllGenres() {
+        String sqlQuery = "SELECT * FROM genres GROUP BY id";
+        return jdbcTemplate.query(sqlQuery, GenreStorageDAO::buildGenre);
     }
 
     @Override
