@@ -25,7 +25,7 @@ public class LikesStorageDAO implements LikesStorage {
     } */
 
     @Override
-    public void addLike(int userId, int filmId) {
+    public void addLike(int filmId, int userId) {
         try {
             String checkFilmQuery = "SELECT COUNT(*) FROM films WHERE film_id = ?";
             Integer filmCount = jdbcTemplate.queryForObject(checkFilmQuery, Integer.class, filmId);
@@ -48,7 +48,7 @@ public class LikesStorageDAO implements LikesStorage {
     }
 
     @Override
-    public void removeLike(int userId, int filmId) {
+    public void removeLike(int filmId, int userId) {
         String sqlQuery = "DELETE FROM likes WHERE user_id = ? AND film_id = ?";
         jdbcTemplate.update(sqlQuery, userId, filmId);
     }
