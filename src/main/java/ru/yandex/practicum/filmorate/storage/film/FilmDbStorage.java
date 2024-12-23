@@ -63,10 +63,13 @@ public class FilmDbStorage implements FilmStorage {
             return statement;
         }, keyHolder);
         film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
-
         String sql = "UPDATE films SET mpa_rating = ? WHERE film_id = ?";
         jdbcTemplate.update(sql, film.getMpaRating().getId(), film.getId());
-
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+            Set<Genre> sortedGenres = new TreeSet<>(Comparator.comparingInt(Genre::getId));
+            sortedGenres.addAll(film.getGenres());
+            film.setGenres(sortedGenres);
+        }
         genreStorage.updateFilmGenres(film);
         checkFilm(film.getId());
         log.info("Создан фильм: {}", film);
