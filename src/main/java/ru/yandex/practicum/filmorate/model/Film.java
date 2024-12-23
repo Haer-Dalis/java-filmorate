@@ -42,7 +42,7 @@ public class Film {
 
     private Set<Genre> genres = new HashSet<>();
 
-    public long getLikesCount() {
+    public int getLikesCount() {
         if (likes == null) {
             return 0;
         } else {

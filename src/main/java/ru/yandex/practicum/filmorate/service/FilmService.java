@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -62,6 +63,11 @@ public class FilmService {
     }
 
     public List<Film> getMoviesByLikes(int count) {
+        if (count <= 0) {
+            throw new ValidationException(
+                    String.format("в метод getPopularFilms " +
+                            "передано некорретное значение: %d", count));
+        }
         return filmStorage.getPopularFilms(count);
     }
 

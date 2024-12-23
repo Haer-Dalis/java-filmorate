@@ -15,6 +15,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MpaRating;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaRatingStorage;
 
 import java.sql.Date;
@@ -35,6 +36,8 @@ public class FilmDbStorage implements FilmStorage {
     private final GenreStorage genreStorage;
 
     private final MpaRatingStorage mpaStorage;
+
+    private final LikesStorage likesStorage;
 
     @Override
     public List<Film> getFilms() {
@@ -120,6 +123,8 @@ public class FilmDbStorage implements FilmStorage {
                 .findAny().orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND,
                 "Нет фильма с id = " + id));
         film.setGenres(genreStorage.getFilmGenres(id));
+        List<Integer> likes = likesStorage.getLikes(id);
+        film.setLikes(new HashSet<>(likes));
         return film;
     }
 
@@ -131,9 +136,17 @@ public class FilmDbStorage implements FilmStorage {
                 " LEFT OUTER JOIN likes l ON l.film_id = f.film_id" +
                 " LEFT JOIN mpa_rating m ON f.mpa_rating = m.id" +
                 " GROUP BY f.film_id ORDER BY COUNT(l.user_id), f.film_id DESC LIMIT (?)";
-        return jdbcTemplate.query(sqlQuery, FilmDbStorage::buildFilm, limit).stream()
-                .peek(film -> film.setGenres(genreStorage.getFilmGenres(film.getId())))
-                .collect(Collectors.toList());
+
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
+            Film film = FilmDbStorage.buildFilm(rs, rowNum);
+            film.setGenres(genreStorage.getFilmGenres(film.getId()));
+
+            String likesQuery = "SELECT user_id FROM likes WHERE film_id = ?";
+            Set<Integer> likes = new HashSet<>(jdbcTemplate.queryForList(likesQuery, Integer.class, film.getId()));
+            film.setLikes(likes);
+
+            return film;
+        }, limit);
     }
 
     private void checkFilm(int id) {
