@@ -135,12 +135,11 @@ public class FilmDbStorage implements FilmStorage {
                 " FROM films f" +
                 " LEFT OUTER JOIN likes l ON l.film_id = f.film_id" +
                 " LEFT JOIN mpa_rating m ON f.mpa_rating = m.id" +
-                " GROUP BY f.film_id ORDER BY COUNT(l.user_id), f.film_id DESC LIMIT (?)";
-
+                " GROUP BY f.film_id" +
+                " ORDER BY COUNT(l.user_id) DESC, f.film_id DESC LIMIT ?";
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
             Film film = FilmDbStorage.buildFilm(rs, rowNum);
             film.setGenres(genreStorage.getFilmGenres(film.getId()));
-
             String likesQuery = "SELECT user_id FROM likes WHERE film_id = ?";
             Set<Integer> likes = new HashSet<>(jdbcTemplate.queryForList(likesQuery, Integer.class, film.getId()));
             film.setLikes(likes);
