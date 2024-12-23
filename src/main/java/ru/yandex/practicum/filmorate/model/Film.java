@@ -10,10 +10,8 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.validators.ReleaseDate;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Film.
@@ -42,7 +40,7 @@ public class Film {
     @JsonProperty("mpa")
     private MpaRating mpaRating;
 
-    private Set<Genre> genres = new TreeSet<>(Comparator.comparingInt(Genre::getId));
+    private Set<Genre> genres = new HashSet<>();
 
     public int getLikesCount() {
         if (likes == null) {
