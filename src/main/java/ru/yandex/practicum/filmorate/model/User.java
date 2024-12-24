@@ -32,5 +32,5 @@ public class User {
     @CorrectBirthday
     private LocalDate birthday;
 
-    public Set<Integer> friends = new HashSet<>();
+    public Set<Integer> friends;
 }

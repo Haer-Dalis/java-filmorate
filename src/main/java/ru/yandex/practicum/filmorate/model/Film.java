@@ -35,12 +35,12 @@ public class Film {
     @Positive
     private int duration;
 
-    private Set<Integer> likes = new HashSet<>();
+    private Set<Integer> likes;
 
     @JsonProperty("mpa")
     private MpaRating mpaRating;
 
-    private Set<Genre> genres = new HashSet<>();
+    private Set<Genre> genres;
 
     public int getLikesCount() {
         if (likes == null) {

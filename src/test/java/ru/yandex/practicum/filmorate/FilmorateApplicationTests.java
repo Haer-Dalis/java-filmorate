@@ -53,7 +53,6 @@ public class FilmorateApplicationTests {
 
 	@BeforeEach
 	public void setUp() {
-		// Очищаем таблицы перед каждым тестом
 		jdbcTemplate.update("DELETE FROM likes");
 		jdbcTemplate.update("DELETE FROM film_genres");
 		jdbcTemplate.update("DELETE FROM genres");
@@ -61,7 +60,6 @@ public class FilmorateApplicationTests {
 		jdbcTemplate.update("DELETE FROM mpa_rating");
 		jdbcTemplate.update("DELETE FROM users");
 
-		// Заполнение таблицы пользователей
 		jdbcTemplate.update("INSERT INTO users (email, login, name, birthday) VALUES ('Dunkan@yahoo.com', " +
 				"'slayerXXX', 'Ivan Petrov', '1990-01-01')");
 		jdbcTemplate.update("INSERT INTO users (email, login, name, birthday) VALUES ('destroyer@yandex.ru', " +
@@ -69,7 +67,6 @@ public class FilmorateApplicationTests {
 		jdbcTemplate.update("INSERT INTO users (email, login, name, birthday) VALUES ('kapitolijskayaninja@gmail.com', " +
 				"'ninjaSKapitolija', 'Natalia Sidorova', '2000-10-30')");
 
-		// Заполнение тестовой базы данных
 		jdbcTemplate.update("INSERT INTO mpa_rating (id, rating_name) VALUES (1, 'G'), (2, 'PG')");
 		jdbcTemplate.update("INSERT INTO films (film_id, name, description, release_date, duration, mpa_rating) " +
 				"VALUES (1, 'Москва слезам не верит', 'Классика советского кинематографа', '1980-02-11', 150, 1)");
@@ -78,7 +75,7 @@ public class FilmorateApplicationTests {
 	}
 
 	@Test
-	public void shouldGetFilmById() {
+	public void gettingFilmById() {
 		Film film = filmStorage.getFilmById(1);
 
 		assertThat(film).isNotNull();
@@ -89,7 +86,7 @@ public class FilmorateApplicationTests {
 	}
 
 	@Test
-	public void shouldGetAllFilms() {
+	public void gettingAllFilms() {
 		List<Film> films = filmStorage.getFilms();
 
 		assertThat(films).hasSize(2);
@@ -98,7 +95,7 @@ public class FilmorateApplicationTests {
 	}
 
 	@Test
-	public void shouldGetPopularFilms() {
+	public void gettingPopularFilms() {
 		List<Film> popularFilms = filmStorage.getPopularFilms(2);
 
 		assertThat(popularFilms).hasSize(2);
@@ -107,8 +104,10 @@ public class FilmorateApplicationTests {
 	}
 
 	@Test
-	public void shouldGetUserById() {
-		User user = userStorage.getUserById(1);
+	public void gettingUserById() {
+		Integer userId1 = jdbcTemplate.queryForObject("SELECT user_id FROM users WHERE email = 'Dunkan@yahoo.com'",
+				Integer.class);
+		User user = userStorage.getUserById(userId1);
 
 		assertThat(user).isNotNull();
 		assertThat(user.getName()).isEqualTo("Ivan Petrov");
@@ -116,7 +115,7 @@ public class FilmorateApplicationTests {
 	}
 
 	@Test
-	public void shouldAddFriend() {
+	public void addingFriend() {
 		Integer userId1 = jdbcTemplate.queryForObject("SELECT user_id FROM users WHERE email = 'Dunkan@yahoo.com'",
 				Integer.class);
 		Integer userId2 = jdbcTemplate.queryForObject("SELECT user_id FROM users WHERE email = 'destroyer@yandex.ru'",
@@ -130,7 +129,7 @@ public class FilmorateApplicationTests {
 	}
 
 	@Test
-	public void shouldDeleteFriend() {
+	public void deletingFriend() {
 		Integer userId1 = jdbcTemplate.queryForObject("SELECT user_id FROM users WHERE email = 'Dunkan@yahoo.com'",
 				Integer.class);
 		Integer userId2 = jdbcTemplate.queryForObject("SELECT user_id FROM users WHERE email = 'destroyer@yandex.ru'",
@@ -138,8 +137,6 @@ public class FilmorateApplicationTests {
 		friendshipStorage.addFriend(userId1, userId2);
 		friendshipStorage.deleteFriend(userId1, userId2);
 		Set<Integer> friends = friendshipStorage.getUserFriends(userId1);
-		assertThat(friends).doesNotContain(2);
+		assertThat(friends).doesNotContain(userId2);
 	}
-
-
 }

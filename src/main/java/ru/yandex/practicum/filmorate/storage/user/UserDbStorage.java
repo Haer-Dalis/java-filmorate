@@ -99,7 +99,12 @@ public class UserDbStorage implements UserStorage {
                 .build();
     }
 
+    @Override
     public void deleteUser(int id) {
+        checkUser(id);
+        String sqlQuery = "DELETE FROM users WHERE user_id = ?";
+        jdbcTemplate.update(sqlQuery, id);
+        log.info("Удален пользователь с id: {}", id);
     }
 
 }

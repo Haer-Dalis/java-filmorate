@@ -80,14 +80,15 @@ public class FilmDbStorage implements FilmStorage {
         if (genres == null || genres.isEmpty()) {
             return;
         }
+        genres.forEach(this::validateGenre);
+    }
 
-        for (Genre genre : genres) {
-            try {
-                genreStorage.getGenreById(genre.getId());
-            } catch (NotFoundException e) {
-                throw new BadRequestException(HttpStatus.BAD_REQUEST,
-                        String.format("Некорректный жанр с id = %d", genre.getId()));
-            }
+    private void validateGenre(Genre genre) {
+        try {
+            genreStorage.getGenreById(genre.getId());
+        } catch (NotFoundException e) {
+            throw new BadRequestException(HttpStatus.BAD_REQUEST,
+                    String.format("Некорректный жанр с id = %d", genre.getId()));
         }
     }
 
