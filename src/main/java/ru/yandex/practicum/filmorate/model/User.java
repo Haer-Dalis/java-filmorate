@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.validators.CorrectBirthday;
 import ru.yandex.practicum.filmorate.validators.WithoutSpaces;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
