@@ -12,7 +12,7 @@ public interface FilmStorage {
 
     Film getFilmById(int id);
 
-    void deleteFilm(int id);
-
     List<Film> getFilms();
+
+    List<Film> getPopularFilms(Integer limit);
 }

@@ -1,28 +1,32 @@
 package ru.yandex.practicum.filmorate.service;
 
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserService userService;
+    private final LikesStorage likesStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserService userService) {
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
+                       UserService userService, LikesStorage likesStorage) {
         this.filmStorage = filmStorage;
         this.userService = userService;
+        this.likesStorage = likesStorage;
     }
 
 
@@ -50,30 +54,21 @@ public class FilmService {
 
     public void like(int filmId, int userId) {
         userService.getUserById(userId);
-        getFilmById(filmId).getLikes().add(userId);
+        likesStorage.addLike(filmId, userId);
     }
 
     public void unlike(int filmId, int userId) {
         userService.getUserById(userId);
-        getFilmById(filmId).getLikes().remove(userId);
+        likesStorage.removeLike(filmId, userId);
     }
 
     public List<Film> getMoviesByLikes(int count) {
-        List<Film> sortedList = new ArrayList<>(getFilmsList());
-        sortedList.sort(new FilmsByLikesComparator());
-        if (count == 0) {
-            return sortedList.stream().limit(10).collect(Collectors.toList());
-        } else {
-            return sortedList.stream().limit(count).collect(Collectors.toList());
+        if (count <= 0) {
+            throw new ValidationException(
+                    String.format("в метод getPopularFilms " +
+                            "передано некорретное значение: %d", count));
         }
-    }
-
-    private static class FilmsByLikesComparator implements Comparator<Film> {
-
-        @Override
-        public int compare(Film film1, Film film2) {
-            return Integer.compare(film2.getLikes().size(), film1.getLikes().size());
-        }
+        return filmStorage.getPopularFilms(count);
     }
 
 }
